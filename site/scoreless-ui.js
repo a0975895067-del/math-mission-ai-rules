@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const slogan=document.querySelector('.eyebrow');
  if(slogan){slogan.innerHTML='<span>無論身在何處，都能用自己的步調認識數學；</span><span>帶著好奇心，輕鬆發現每一種可能。</span>';slogan.style.cssText='max-width:720px;margin:12px auto;font-size:1.28rem;font-weight:800;line-height:1.7;letter-spacing:.06em';}
  const intro=document.querySelector('.hero .intro');
- if(intro){intro.innerHTML='<span>像在戶外野餐一樣，找個舒服的位置，依照自己的步調慢慢讀、慢慢想。</span><span>這裡沒有趕路與比較，只有陪你安心探索的數學時光。</span>';intro.style.cssText='max-width:680px;margin:14px auto;font-size:1.16rem;font-weight:700;line-height:1.9';}
+ if(intro){intro.innerHTML='<span>直接選擇傳統測驗、怪物對戰或收集精靈，依照自己的步調安心練習。</span><span>完成原測驗與 5 題補強後，即可下載自己的 PDF 學習分析報告。</span>';intro.style.cssText='max-width:680px;margin:14px auto;font-size:1.16rem;font-weight:700;line-height:1.9';}
  document.querySelectorAll('.hero .eyebrow span,.hero .intro span').forEach((line,index)=>line.style.cssText=`display:block;width:100%;text-align:justify;text-align-last:center;text-justify:inter-character;${index%2?'margin-top:.18em':''}`);
  const gradeNotes=document.querySelectorAll('.grade-choices small');
  if(gradeNotes[1])gradeNotes[1].textContent='第三、四冊數學';
