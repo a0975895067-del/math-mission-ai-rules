@@ -48,7 +48,7 @@ function transform(html) {
   if (!next.includes('static-access.js')) {
     next = next.replace('</head>', '  <script src="static-access.js"></script>\n</head>');
   }
-  next = next.replace(/<meta\s+name=["']robots["'][^>]*>/i, '');
+  next = next.replace(/^[ \t]*<meta\s+name=["']robots["'][^>]*>[ \t]*\r?\n?/im, '');
   next = next.replace('</head>', '  <meta name="robots" content="noindex, nofollow, noarchive">\n</head>');
   next = next.replace(/^[\t ]+$/gm, '');
   return next;
