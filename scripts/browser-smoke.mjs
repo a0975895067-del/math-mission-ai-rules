@@ -63,7 +63,24 @@ try {
   const page = await target();
   cdp = await connect(page.webSocketDebuggerUrl);
   await cdp.call('Runtime.enable');
-  await wait(1200);
+  let setupReady = false;
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const ready = await cdp.call('Runtime.evaluate', {
+      expression: `Boolean(
+        document.querySelector('#setup') &&
+        document.querySelector('#playStage') &&
+        document.querySelector('.mode-page-title')?.textContent?.trim() === '怪物對戰' &&
+        document.querySelector('#start')?.textContent?.includes('開始怪物對戰')
+      )`,
+      returnByValue: true,
+    });
+    if (ready.result.value === true) {
+      setupReady = true;
+      break;
+    }
+    await wait(200);
+  }
+  assert.equal(setupReady, true, '對戰頁在導向後未完成載入');
 
   const before = await cdp.call('Runtime.evaluate', {
     expression: `JSON.stringify({
@@ -87,7 +104,11 @@ try {
       gameVisible: !document.querySelector('#game').classList.contains('hidden'),
       question: document.querySelector('#question')?.textContent?.trim(),
       answers: document.querySelectorAll('#answers button').length,
-      battleStage: Boolean(document.querySelector('#playStage:not(.hidden)'))
+      battleStage: Boolean(document.querySelector('#playStage:not(.hidden)')),
+      battleStageClass: document.querySelector('#playStage')?.className || null,
+      playModeReady: Boolean(window.MathPlayModes),
+      activeMode: window.MathPlayModes?.mode || null,
+      setupNote: document.querySelector('#setupNote')?.textContent || null
     })`,
     returnByValue: true,
   });
@@ -95,7 +116,7 @@ try {
   assert.equal(started.gameVisible, true, '按下開始後未進入題目');
   assert.ok(started.question.length > 4, '題目未載入');
   assert.equal(started.answers, 4, '選項不是四個');
-  assert.equal(started.battleStage, true, '對戰舞台未顯示');
+  assert.equal(started.battleStage, true, `對戰舞台未顯示：${JSON.stringify(started)}`);
 
   const completed = await cdp.call('Runtime.evaluate', {
     expression: `(async()=>{

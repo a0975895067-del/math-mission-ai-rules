@@ -80,5 +80,5 @@
  document.addEventListener('math-demo-reset',()=>{$('#playReportSummary')?.remove();});
  window.addEventListener?.('math-auth-changed',()=>{rewardGeneration++;rewards=null;selectedAlly='';encounters=[];renderRewards();refreshRewards();});
  window.MathPlayModes={damage,present,answerResult,snapshot,begin,reportSummary,defend,setRewards,get mode(){return active;}};
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+ if(document.querySelector('#setup'))install();else document.addEventListener('DOMContentLoaded',install,{once:true});
 })();
