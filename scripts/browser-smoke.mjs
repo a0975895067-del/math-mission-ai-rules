@@ -98,7 +98,24 @@ try {
   assert.match(initial.start, /開始怪物對戰/, '開始按鈕文字錯誤');
 
   await cdp.call('Runtime.evaluate', { expression: `document.querySelector('#start').click()` });
-  await wait(1500);
+  let gameReady = false;
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const ready = await cdp.call('Runtime.evaluate', {
+      expression: `Boolean(
+        !document.querySelector('#game')?.classList.contains('hidden') &&
+        document.querySelector('#question')?.textContent?.trim().length > 4 &&
+        document.querySelectorAll('#answers button').length === 4 &&
+        document.querySelector('#playStage:not(.hidden)')
+      )`,
+      returnByValue: true,
+    });
+    if (ready.result.value === true) {
+      gameReady = true;
+      break;
+    }
+    await wait(200);
+  }
+  assert.equal(gameReady, true, '按下開始後未在時限內完成題目與對戰舞台載入');
   const after = await cdp.call('Runtime.evaluate', {
     expression: `JSON.stringify({
       gameVisible: !document.querySelector('#game').classList.contains('hidden'),
