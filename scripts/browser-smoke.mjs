@@ -157,11 +157,17 @@ try {
       await pause(250);
       const download=document.querySelector('#downloadReport');
       if(!download||download.disabled)throw new Error('PDF 下載按鈕未啟用');
-      download.click();await pause(1200);
-      const direct=document.querySelector('#pdfDirectLink');
-      const preview=document.querySelector('#pdfPreviewLink');
+      download.click();
+      let direct,preview,pdfReady=false;
+      for(let attempt=0;attempt<300;attempt+=1){
+        await pause(200);
+        direct=document.querySelector('#pdfDirectLink');
+        preview=document.querySelector('#pdfPreviewLink');
+        if(!download.disabled&&direct?.href?.startsWith('blob:')&&preview?.href?.startsWith('blob:')){pdfReady=true;break;}
+      }
       return JSON.stringify({
         downloadText:download.textContent,
+        pdfReady,
         directReady:Boolean(direct?.href?.startsWith('blob:')&&direct.download?.endsWith('.pdf')),
         previewReady:Boolean(preview?.href?.startsWith('blob:')),
         localNotice:document.querySelector('#stageSaveNotice')?.textContent||''
@@ -171,7 +177,8 @@ try {
     returnByValue: true,
   });
   const report = JSON.parse(completed.result.value);
-  assert.match(report.downloadText, /下載兩階段完整 PDF 報告/, 'PDF 下載按鈕文字不正確');
+  assert.equal(report.pdfReady, true, 'PDF 未在時限內完成建立');
+  assert.match(report.downloadText, /下載.*PDF.*報告/, 'PDF 下載按鈕文字不正確');
   assert.equal(report.directReady, true, 'PDF 下載連結未建立');
   assert.equal(report.previewReady, true, 'PDF 預覽連結未建立');
   assert.match(report.localNotice, /不會上傳到原站後台/, '未顯示本機報告說明');
