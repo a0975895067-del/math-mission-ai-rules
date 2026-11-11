@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = path.join(root, 'site');
+const dist = path.join(root, 'dist');
 const pages = [
   'app.html',
   'practice.html',
@@ -83,4 +84,6 @@ for (const file of removeFiles) {
 }
 
 fs.writeFileSync(path.join(site, '.nojekyll'), '');
+fs.rmSync(dist, { recursive: true, force: true });
+fs.cpSync(site, dist, { recursive: true });
 console.log(`PASS: 已產生 ${pages.length + 2} 個無登入靜態頁面。`);

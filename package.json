@@ -8,6 +8,6 @@
     "test": "node scripts/verify-site.mjs",
     "check": "npm run build && npm test",
     "test:browser": "node scripts/browser-smoke.mjs",
-    "serve": "npx --yes http-server site -p 4173 -c-1"
+    "serve": "npx --yes http-server dist -p 4173 -c-1"
   }
 }

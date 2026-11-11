@@ -39,6 +39,7 @@ site/
 ├─ mode-*.js / play-*.js      # 模式切換與遊戲行為
 ├─ grade*-bank.js             # 分年級題庫
 └─ *.css                      # 共用與模式樣式
+dist/                         # `npm run build` 產生；不得手動修改或提交
 scripts/
 ├─ build-static.mjs           # 移除登入／後台並產生入口
 └─ verify-site.mjs            # 結構、連結、題庫與禁用功能檢查
@@ -96,6 +97,6 @@ scripts/
 ## 9. 部署規則
 
 - GitHub 倉庫與原站必須不同；不得 force-push 原站。
-- GitHub Pages 只發布 `site/` 內容。
+- GitHub Pages 只發布 `npm run build` 產生的 `dist/` 內容。
 - 「只靠網址、不需帳號」代表不列入導覽與搜尋索引，並不等於真正的存取控制。若內容必須保密，應改用有驗證的私人主機，不能只依賴秘密網址。
 - 每次部署前先執行 `npm run check`，部署後抽查三種模式。

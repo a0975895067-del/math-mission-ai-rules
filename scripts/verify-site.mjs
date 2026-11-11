@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const site = path.join(root, 'site');
+const site = path.join(root, 'dist');
 const pages = ['index.html', 'practice.html', 'battle.html', 'collection.html', 'practice-panel.html', 'battle-panel.html', 'collection-panel.html'];
 const forbidden = /authGate|studentEmail|studentCode|sendCode|verifyCode|logoutButton|secure-auth\.js|local-access\.js|teacher-dashboard/i;
 

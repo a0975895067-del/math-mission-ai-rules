@@ -9,7 +9,7 @@ npm run check
 npm run serve
 ```
 
-開啟 `http://localhost:4173/`。網站不要求帳號，作答資料留在目前瀏覽器。
+`npm run check` 會把 `site/` 建置為 `dist/`；接著開啟 `http://localhost:4173/`。網站不要求帳號，作答資料留在目前瀏覽器。
 
 Windows 已安裝 Chrome 時，可在本機伺服器啟動後執行 `npm run test:browser`，自動確認怪物對戰能載入題目、四個選項與對戰舞台。
 
