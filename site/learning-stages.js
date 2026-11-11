@@ -1,5 +1,6 @@
 (() => {
   window.MathTwoStageLearning=true;
+  const staticMode=window.MATH_STATIC_EDITION===true;
   let runId='',stage1Save=null,assistant=[],epoch=0,clientRunId=crypto.randomUUID();
   const $=s=>document.querySelector(s);
   const p=(parent,text,tag='p')=>{const el=document.createElement(tag);el.textContent=text;parent.append(el);return el;};
@@ -27,7 +28,7 @@
     const ask=$('#ask').onclick;$('#ask').onclick=()=>{ask();assistant.push({question:$('#thinking').value.slice(0,3000),guidance:$('#coachReply').textContent,at:new Date().toISOString()});};
 
   });
-  function saveFirst(){const report=window.MathLatestReport,started=epoch;if(!report)return Promise.reject(Error('原測驗報告尚未建立'));report.stage2Completed=false;report.backendSaved=false;notice('第一階段已完成，正在儲存到正式後台。');stage1Save=api('stage1',{report:structuredClone(report)}).then(result=>{if(started!==epoch)return result;runId=result.id;notice('第一階段已儲存。先理解觀念與向助手提問，再到最底下完成 5 題新題。完成後會將兩階段結果合併至同一份報告。');return result;}).catch(error=>{if(started===epoch){stage1Save=null;notice(error.message+'；不要關閉頁面，請重試。',saveFirst);}throw error;});stage1Save.catch(()=>{});return stage1Save;}
+  function saveFirst(){const report=window.MathLatestReport,started=epoch;if(!report)return Promise.reject(Error('原測驗報告尚未建立'));report.stage2Completed=false;report.backendSaved=false;notice(staticMode?'第一階段已完成，正在目前瀏覽器整理學習結果。':'第一階段已完成，正在儲存到正式後台。');stage1Save=api('stage1',{report:structuredClone(report)}).then(result=>{if(started!==epoch)return result;runId=result.id;notice(staticMode?'第一階段結果已保留在目前頁面。先閱讀觀念分析，再完成 5 題補強；完成後可下載兩階段 PDF 報告。':'第一階段已儲存。先理解觀念與向助手提問，再到最底下完成 5 題新題。完成後會將兩階段結果合併至同一份報告。');return result;}).catch(error=>{if(started===epoch){stage1Save=null;notice(error.message+'；不要關閉頁面，請重試。',saveFirst);}throw error;});stage1Save.catch(()=>{});return stage1Save;}
   document.addEventListener('learning-stage1',()=>{
     lock();$('#restart').hidden=true;
     const report=window.MathLatestReport,box=$('#diagnosis');
@@ -68,7 +69,7 @@
     renderDetails(panel,'原測驗：逐題作答與觀念回顧',report.attempts);
     renderDetails(panel,'5 題觀念測驗：逐題作答與觀念回顧',records);
 
-    notice('正在將兩階段作答、助手提問與整合分析儲存到正式後台…');
+    notice(staticMode?'正在目前瀏覽器整合兩階段作答、助手提問與複習建議…':'正在將兩階段作答、助手提問與整合分析儲存到正式後台…');
     try{
       if(!runId)await(stage1Save||saveFirst());if(started!==epoch)return;
       const payload=()=>({id:runId,records,plan:report.integratedPlan,assistant,reflection:report.reflection});
@@ -81,7 +82,7 @@
         result=await api('stage2',payload());
       }
       if(started!==epoch)return;report.stage2Completed=result.completed;report.backendSaved=true;if(result.play)report.playSummary=result.play;if(result.rewards){report.playRewards=result.rewards;window.MathPlayModes?.setRewards(result.rewards);}$('#restart').hidden=false;window.MathPlayModes?.reportSummary();
-      notice('兩階段已儲存到正式後台。現在可以下載完整 PDF；教師與開發者可依權限查看完整紀錄。');
+      notice(staticMode?'兩階段結果已整理完成。現在可下載自己的完整 PDF 學習報告；作答內容不會上傳到原站後台。':'兩階段已儲存到正式後台。現在可以下載完整 PDF；教師與開發者可依權限查看完整紀錄。');
       const button=$('#downloadReport');if(button){button.disabled=false;button.textContent='下載兩階段完整 PDF 報告';}
     }catch(error){if(started!==epoch)return;notice('尚未完整儲存：'+error.message+'。下載仍停用，請重試；測驗紀錄留在此頁。',()=>finish(records));}panel.scrollIntoView({behavior:'smooth'});
   }

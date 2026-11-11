@@ -487,7 +487,7 @@
   }
   async function downloadPdf() {
     const report = window.MathLatestReport;
-    if(window.MathTwoStageLearning && (!report?.stage2Completed || !report?.backendSaved)){alert('請先完成 5 題新觀念測驗及第二階段整合儲存，再下載完整報告。');return;}
+    if(window.MathTwoStageLearning && (!report?.stage2Completed || !report?.backendSaved)){alert(window.MATH_STATIC_EDITION?'請先完成 5 題新觀念測驗與第二階段整合，再下載完整報告。':'請先完成 5 題新觀念測驗及第二階段整合儲存，再下載完整報告。');return;}
     if (!report) {
       alert('請先完成測驗，才能建立分析報告。');
       return;
@@ -525,7 +525,7 @@
     const download = document.createElement('button');
     download.id = 'downloadReport';
     download.className = 'primary';
-    download.textContent = '下載自己的 PDF 分析報告';
+    download.textContent = '下載自己的 PDF 學習分析報告';
     download.onclick = downloadPdf;
     $('#restart').insertAdjacentElement('beforebegin', download);
     const role = window.MathStudentAuth?.role;

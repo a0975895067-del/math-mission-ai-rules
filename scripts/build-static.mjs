@@ -41,11 +41,16 @@ function transform(html) {
     next = next.replace(new RegExp(`\\s*<link\\b[^>]*href=["'][^"']*${escaped}[^"']*["'][^>]*>`, 'gi'), '');
   }
   next = next.replaceAll('learning-area hidden', 'learning-area');
+  next = next.replaceAll(
+    '完成後可向 AI 助手提問，並查看個人學習分析。',
+    '完成原測驗與 5 題補強後，可下載自己的 PDF 學習分析報告。',
+  );
   if (!next.includes('static-access.js')) {
     next = next.replace('</head>', '  <script src="static-access.js"></script>\n</head>');
   }
   next = next.replace(/<meta\s+name=["']robots["'][^>]*>/i, '');
   next = next.replace('</head>', '  <meta name="robots" content="noindex, nofollow, noarchive">\n</head>');
+  next = next.replace(/^[\t ]+$/gm, '');
   return next;
 }
 

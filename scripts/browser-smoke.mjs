@@ -96,7 +96,48 @@ try {
   assert.ok(started.question.length > 4, '題目未載入');
   assert.equal(started.answers, 4, '選項不是四個');
   assert.equal(started.battleStage, true, '對戰舞台未顯示');
-  console.log(`PASS: 怪物對戰已開始，題目「${started.question.slice(0, 28)}…」，四個選項與對戰舞台均正常。`);
+
+  const completed = await cdp.call('Runtime.evaluate', {
+    expression: `(async()=>{
+      const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+      async function answerVisibleQuestion(){
+        for(const button of [...document.querySelectorAll('#answers button')]){
+          button.click();await pause(5);
+          if(!document.querySelector('#next').classList.contains('hidden'))return;
+        }
+        throw new Error('找不到可完成目前題目的答案');
+      }
+      for(let index=0;index<10;index+=1){
+        await answerVisibleQuestion();document.querySelector('#next').click();await pause(15);
+      }
+      const followupStart=document.querySelector('#fiveQuestionReview button');
+      if(!followupStart)throw new Error('未建立五題補強入口');
+      followupStart.click();await pause(30);
+      for(let index=0;index<5;index+=1){
+        await answerVisibleQuestion();document.querySelector('#next').click();await pause(25);
+      }
+      await pause(250);
+      const download=document.querySelector('#downloadReport');
+      if(!download||download.disabled)throw new Error('PDF 下載按鈕未啟用');
+      download.click();await pause(1200);
+      const direct=document.querySelector('#pdfDirectLink');
+      const preview=document.querySelector('#pdfPreviewLink');
+      return JSON.stringify({
+        downloadText:download.textContent,
+        directReady:Boolean(direct?.href?.startsWith('blob:')&&direct.download?.endsWith('.pdf')),
+        previewReady:Boolean(preview?.href?.startsWith('blob:')),
+        localNotice:document.querySelector('#stageSaveNotice')?.textContent||''
+      });
+    })()`,
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  const report = JSON.parse(completed.result.value);
+  assert.match(report.downloadText, /下載兩階段完整 PDF 報告/, 'PDF 下載按鈕文字不正確');
+  assert.equal(report.directReady, true, 'PDF 下載連結未建立');
+  assert.equal(report.previewReady, true, 'PDF 預覽連結未建立');
+  assert.match(report.localNotice, /不會上傳到原站後台/, '未顯示本機報告說明');
+  console.log(`PASS: 怪物對戰與 15 題兩階段流程完成；PDF 下載、預覽及本機隱私說明均正常。`);
 } finally {
   try { await cdp?.call('Browser.close'); } catch {}
   cdp?.close();

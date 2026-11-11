@@ -43,7 +43,7 @@
       }
     }
       const section=document.createElement('section');section.id='fiveQuestionReview';section.className='action-plan';
-      const note=document.createElement('p');note.textContent='第一階段：閱讀觀念分析，向助手提問，試著口說你的思路。滑到這裡後做 5 題新的觀念測驗；題目不會與原測驗相同。完成後進入第二階段，才能下載完整報告。';
+      const note=document.createElement('p');note.textContent='第一階段：閱讀觀念分析，向助手提問，試著口說你的思路。滑到這裡後做 5 題新的觀念測驗；題目不會與原測驗相同。完成第二階段後，可在目前瀏覽器下載完整 PDF 報告。';
       const button=document.createElement('button');button.className='primary';button.textContent='我已閱讀說明，開始 5 題觀念測驗';button.onclick=startFollowup;section.append(note,button);$('#coach').append(section);
     if(window.MathLatestReport)Object.assign(window.MathLatestReport,{answeredQuestions:mainSnapshot.answered,wrongQuestions:mainSnapshot.wrong,finallyCorrect:mainSnapshot.finalCorrect,firstRate:rate});
     if(window.MathLatestReport)window.MathLatestReport.attempts.forEach((record,i)=>{record.explanation=session[i]?.e||'';record.guidance=window.MathConceptGuide(record).text;});
@@ -90,7 +90,7 @@
     $('#questionVisual').innerHTML=item.fig||'';$('#questionVisual').classList.toggle('hidden',!item.fig);
     $('#feedback').textContent='這是新的補強題；先獨立判斷，需要時仍可查看提示與為什麼。';
     $('#hintFeedback').textContent='需要時再打開提示。';$('#whyFeedback').textContent='答錯後可查看解題說明。';
-    $('#why').disabled=true;$('#next').classList.add('hidden');$('#next').textContent=followup.index===4?'完成補強並儲存完整報告':'下一題';
+    $('#why').disabled=true;$('#next').classList.add('hidden');$('#next').textContent=followup.index===4?'完成補強並建立 PDF 報告':'下一題';
     $('#answers').replaceChildren();item.o.forEach((option,i)=>{const button=document.createElement('button');button.textContent=`${String.fromCharCode(65+i)}. ${option}`;button.onclick=()=>answer(i,button);$('#answers').append(button);});
   }
   function answerFollowup(i,button){
@@ -133,7 +133,7 @@
     resetMain();restart();
   };
   document.addEventListener('DOMContentLoaded',()=>{
-    $('#setup ol').innerHTML='<li>第一次選錯即記為錯題，答對後才能進下一題。</li><li>提示與為什麼只引導觀念，不直接提供答案。</li><li>第一階段看分析、向助手提問，再做 5 題不同的新題。</li><li>第二階段統整兩次結果與複習建議，完成後才能下載完整報告。</li>';
+    $('#setup ol').innerHTML='<li>第一次選錯即記為錯題，答對後才能進下一題。</li><li>提示與為什麼只引導觀念，不直接提供答案。</li><li>第一階段看分析、向助手提問，再做 5 題不同的新題。</li><li>第二階段統整兩次結果與複習建議，完成後可下載自己的 PDF 報告；內容不會上傳到原站後台。</li>';
 
   });
 })();

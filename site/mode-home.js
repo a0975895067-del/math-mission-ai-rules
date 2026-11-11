@@ -18,7 +18,8 @@
   b.onkeydown=event=>{const index=entries.findIndex(e=>e[0]===mode);let next;if(event.key==='ArrowRight')next=(index+1)%3;else if(event.key==='ArrowLeft')next=(index+2)%3;else if(event.key==='Home')next=0;else if(event.key==='End')next=2;else return;event.preventDefault();select(entries[next][0]);buttons.get(entries[next][0]).focus();};
   const panel=node('section',null,'mode-workspace');panel.id='modePanel-'+mode;panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',b.id);panel.hidden=true;panels.set(mode,panel);buttons.set(mode,b);grid.append(b);workspace.append(panel);
  }
- section.append(grid,current);host.append(section,workspace);
+ const reportNotice=node('div',null,'play-mode-notice');reportNotice.append(node('strong','📄 完成後可下載 PDF 學習報告'),node('span','完成原測驗與 5 題補強後，系統會整理首次答對率、錯題、提示使用與複習建議。報告只在目前瀏覽器產生，不會上傳到原站後台。'));
+ section.append(reportNotice,grid,current);host.append(section,workspace);
  window.addEventListener('message',event=>{if(event.origin!==location.origin)return;const data=event.data;if(!data||data.type!=='math-mode-panel-size'||!panels.has(data.mode))return;const frame=frames.get(data.mode);if(!frame||event.source!==frame.contentWindow)return;if(Number.isFinite(data.height)&&data.height>=200&&data.height<=100000)frame.style.height=Math.ceil(data.height)+'px';if(data.mode===selected&&['game','coach','setup'].includes(data.focus))requestAnimationFrame(()=>{if(data.mode===selected)frame.scrollIntoView({block:'start'});});});
  function syncAuth(){const next=window.MathStudentAuth?.currentKey||'';if(next!==owner){owner=next;for(const f of frames.values())f.remove();frames.clear();selected='traditional';}if(!owner)for(const p of panels.values())p.replaceChildren();select(selected);}
  window.addEventListener('math-auth-changed',syncAuth);

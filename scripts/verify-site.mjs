@@ -28,6 +28,13 @@ for (const label of ['傳統測驗', '怪物對戰', '收集精靈']) {
 assert.ok(fs.existsSync(path.join(root, 'AGENTS.md')), '缺少 AGENTS.md');
 assert.ok(fs.readFileSync(path.join(root, 'AGENTS.md'), 'utf8').length > 1800, 'AGENTS.md 規則過於簡略');
 assert.doesNotMatch(home, /登入|驗證碼|電子郵件/, '首頁仍出現登入文字');
+assert.match(home, /下載自己的 PDF 學習分析報告/, '首頁未說明學生可下載 PDF 報告');
+const privacy = fs.readFileSync(path.join(site, 'privacy.html'), 'utf8');
+assert.match(privacy, /如何下載學習報告/, '隱私頁未說明報告下載流程');
+assert.match(privacy, /不會把學生的作答內容或 PDF 報告上傳/, '隱私頁未說明本機報告原則');
+assert.doesNotMatch(privacy, /自動編班|教師班級分析|教育雲端登入/, '隱私頁仍含原站帳號功能');
+assert.match(fs.readFileSync(path.join(root, 'README.md'), 'utf8'), /下載個人 PDF 學習分析報告/, 'README 未說明 PDF 報告');
+assert.match(fs.readFileSync(path.join(root, 'AGENTS.md'), 'utf8'), /下載 PDF 學習分析報告/, 'AGENTS.md 未規範 PDF 報告');
 
 const scripts = fs.readdirSync(site).filter((name) => name.endsWith('.js'));
 for (const file of scripts) {
