@@ -99,6 +99,6 @@ scripts/
 ## 9. 部署規則
 
 - GitHub 倉庫與原站必須不同；不得 force-push 原站。
-- 本作業的 GitHub 倉庫保持 Private；實際網站由獨立 Sites 網址發布。若未來改用 GitHub Pages，只能發布 `npm run build` 產生的 `dist/`，並先確認公開性符合需求。
+- 本作業的 GitHub 倉庫設為 Public，供教師直接檢查專案規則與原始碼；不得提交金鑰、權杖、個資或原站部署識別資訊。實際網站由獨立 Sites 網址發布。若未來改用 GitHub Pages，只能發布 `npm run build` 產生的 `dist/`。
 - 「只靠網址、不需帳號」代表不列入導覽與搜尋索引，並不等於真正的存取控制。若內容必須保密，應改用有驗證的私人主機，不能只依賴秘密網址。
 - 每次部署前先執行 `npm run check`，部署後抽查三種模式。
